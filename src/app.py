@@ -16,25 +16,25 @@ CORS(app)
 jackson_family = FamilyStructure("Jackson")
 
 jackson_family.add_member({
-    "id": jackson_family._generateId(),
     "age": 35,
     "first_name": 'Jane',
+    "lucky_numbers": [10, 14, 3],
     "last_name": jackson_family.last_name,
-    "lucky_numbers": [10, 14, 3]
+    "id": jackson_family._generateId(),
 })
 jackson_family.add_member({
-    "id": jackson_family._generateId(),
     "first_name": 'John',
     "age": 33,
+    "lucky_numbers": [7, 13, 22],
     "last_name": jackson_family.last_name,
-    "lucky_numbers": [7, 13, 22]
+    "id": jackson_family._generateId(),
 })
 jackson_family.add_member({
-    "id": jackson_family._generateId(),
     "first_name": 'Jimmy',
     "age": 5,
+    "lucky_numbers": [1],
     "last_name": jackson_family.last_name,
-    "lucky_numbers": [1]
+    "id": jackson_family._generateId(),
 })
 
 # Handle/serialize errors like a JSON object
@@ -62,8 +62,15 @@ def get_single_family_member(member_id):
 @app.route('/member', methods=['POST'])
 def create_member():
     member = request.get_json(force=True)
-    member_obj = jackson_family.add_member(member)
-    return jsonify(member_obj), 200
+    member_obj = {
+            "fist_name": member['first_name'],
+             "last_name": jackson_family.last_name,
+             "id": jackson_family._generateId(),
+             "age": member['age'],
+             "lucky_numbers": member['lucky_numbers']
+        }
+    jackson_family.add_member(member)
+    return f'you successfully added {member["first_name"]} {jackson_family.last_name} to the list', 200
 
 @app.route('/member/<int:member_id>', methods=['DELETE'])
 def delete_member(member_id):
